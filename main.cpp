@@ -1,22 +1,40 @@
 #include <iostream>
-#include "embedding.h"
+//#include "embedding.h"
 using namespace std;
 
  //    youtube link https://www.youtube.com/watch?v=ISNdQcPhsts&t=3685s
  // github link  for scratch c++ : https://github.com/a3a256/TransformerPureC-/blob/main/include/embedding.h
  // github link of the  yoututbe channel that i am following : https://github.com/hkproj/pytorch-transformer/blob/main/model.py
 
- 
-//Main function
+ #include "preprocessing.h"
+ #include "embedding.h"
+ #include "multi_head.h"
+ #include "activations.h"
+#include "normalizing.h"
+#include "encoder_linear.h"
 int main() {
-    const int d_model = 512;
-    const int vocab_size = 10;
+    //printEncoded();   // For encoding the text 
+     Matrix matrix;
+    initializeMatrix(matrix);
+    addMatrix(matrix) ;
+    transpose(matrix) ;
+    //attention
+    qkv_finding(matrix);
+    qk_trans(matrix);
+    softmax(matrix);
+    qkv_final(matrix);
+    resultant_qkv(matrix);
+  
+    //attention block end 
+      addition_block(matrix) ;
+   calculate_params(matrix);
+   normalize_matrix(matrix);
+   //linear layer of encoder 
+   linear_layer1(matrix) ;// consists of linear and bias layer 
+   relu(matrix) ;
 
-    // Create an instance of InputEmbeddings
-    InputEmbeddings embeddings(d_model, vocab_size);
-    embeddings.forward();
-    // // Example: Print a sample embedding value
-    cout << "Sample embedding[0][0]:" << embeddings.embedding[0][0] << endl;
-
+    //to print all information 
+    printMatrix(matrix);
     return 0;
+   
 }
