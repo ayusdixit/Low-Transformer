@@ -12,9 +12,11 @@ using namespace std;
  #include "activations.h"
 #include "normalizing.h"
 #include "encoder_linear.h"
+#include "norm_add_second.h"
 int main() {
     //printEncoded();   // For encoding the text 
      Matrix matrix;
+     //encoder module started
     initializeMatrix(matrix);
     addMatrix(matrix) ;
     transpose(matrix) ;
@@ -29,10 +31,14 @@ int main() {
       addition_block(matrix) ;
    calculate_params(matrix);
    normalize_matrix(matrix);
-   //linear layer of encoder 
+   //linear layer 1of encoder 
    linear_layer1(matrix) ;// consists of linear and bias layer 
    relu(matrix) ;
+ // end of layer 1
 
+   addition2_block(matrix) ;
+normalize_2enc(matrix) ;
+ //encode ends here
     //to print all information 
     printMatrix(matrix);
     return 0;

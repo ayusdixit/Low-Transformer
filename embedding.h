@@ -32,10 +32,12 @@ struct Matrix {
    
     double resultant_qkv[SIZE][SIZE] ; //weights*attention filter  6*6
     double add_qkv_ep[SIZE][SIZE] ; //addition of ep + attention filter  6*6
-    double normalized[SIZE][SIZE] ; //weights*attention filter  6*6
+    double normalized[SIZE][SIZE] ; //normalized*attention filter  6*6
 
     double linear1_output[SIZE][SIZE] ;  //output of linear layer 1 
     double relu1_output[SIZE][SIZE] ;    //output of activation function relu 1 
+    double add_encoder2[SIZE][SIZE] ;   //addition of relu and normalizing  6*6
+    double normalized_2enc[SIZE][SIZE] ; //normalized final output of encoder    6*6
 };
 
 void initializeMatrix(Matrix& m) {
@@ -334,6 +336,22 @@ std::cout << "\n --------------------------------------------------\n";
  for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j < SIZE; j++) {
             std::cout << m.relu1_output[i][j] << "\t";
+        }
+        std::cout << "\n";
+    }
+  std::cout << "\n --------------------------------------------------\n";
+      std::cout << "\n  output  of addition after  relu  layer    :\n";
+ for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            std::cout << m.add_encoder2[i][j] << "\t";
+        }
+        std::cout << "\n";
+    }
+  std::cout << "\n --------------------------------------------------\n";
+      std::cout << "\n  output  of encoder       :\n";
+ for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            std::cout << m.normalized_2enc[i][j] << "\t";
         }
         std::cout << "\n";
     }
