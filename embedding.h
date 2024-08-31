@@ -38,6 +38,21 @@ struct Matrix {
     double relu1_output[SIZE][SIZE] ;    //output of activation function relu 1 
     double add_encoder2[SIZE][SIZE] ;   //addition of relu and normalizing  6*6
     double normalized_2enc[SIZE][SIZE] ; //normalized final output of encoder    6*6
+///////////////////////////decoder/////////////////////////////////////////
+    double d_qk_trans[SIZE][SIZE] ;
+    double d_v [SIZE][SIZE] ; 
+    double d_qkv_ [SIZE][SIZE] ;
+    double d_linear_weights[SIZE][SIZE] ;  //linear weight for decoder  matrix of 6*6
+    double d_resultant_qkv[SIZE][SIZE] ;  //outuput of mha block in decoder matrix of 6*6
+    double  d_add_qkv_ [SIZE][SIZE] ;    //addition of masked mha output with qkv mha decoder  6*6
+    double  d_msha_norm[SIZE][SIZE] ;   //output of masked mHa block 6*6
+    double  d_normalized [SIZE][SIZE];   //output of normalized MHA block in decoder  6*6 
+    // double  [SIZE][SIZE];
+    // double  [SIZE][SIZE];
+    // double  [SIZE][SIZE];
+    // double  [SIZE][SIZE];
+
+    
 };
 
 void initializeMatrix(Matrix& m) {
@@ -149,6 +164,21 @@ void initializeMatrix(Matrix& m) {
     for (int i = 0; i < 1; i++) {
         for (int j = 0; j < SIZE; j++) {
             m.bias_layer1[i][j] = bias1_linearw[i][j];
+        }
+    }
+    //for decoder 
+ double d_linearweights_initValues[SIZE][SIZE] ={
+    {0.8, 0.34, 0.45, 0.54, 0.07,0.53},
+    {0.85, 0.74, 0.78, 0.5 , 0.75,0.55},
+    {0.53, 0.81, 0.55, 0.59, 0.49,0.14},
+    {0.2, 0.3, 0.10,0.62, 0.69, 0.37} ,
+   { 0.4, 0.2, 0.2,0.52, 0.39, 0.47},
+    {0.5, 0.6, 0.12,0.42, 0.39, 0.77}
+};
+
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            m.d_linear_weights[i][j] = d_linearweights_initValues[i][j];
         }
     }
 
@@ -355,6 +385,17 @@ std::cout << "\n --------------------------------------------------\n";
         }
         std::cout << "\n";
     }
+
+ std::cout << "\n --------------------------------------------------\n";
+      std::cout << "\n  output  of decoder MHA        :\n";
+ for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            std::cout << m.d_resultant_qkv[i][j] << "\t";
+        }
+        std::cout << "\n";
+    }
+
+
 
 }
 #endif // EMBEDDING_H

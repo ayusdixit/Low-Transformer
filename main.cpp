@@ -13,9 +13,12 @@ using namespace std;
 #include "normalizing.h"
 #include "encoder_linear.h"
 #include "norm_add_second.h"
+#include "decoder.h"
+#include "decoder_normalize.h"
+
 int main() {
     //printEncoded();   // For encoding the text 
-     Matrix matrix;
+    Matrix matrix;
      //encoder module started
     initializeMatrix(matrix);
     addMatrix(matrix) ;
@@ -26,21 +29,40 @@ int main() {
     softmax(matrix);
     qkv_final(matrix);
     resultant_qkv(matrix);
-  
-    //attention block end 
-      addition_block(matrix) ;
-   calculate_params(matrix);
-   normalize_matrix(matrix);
-   //linear layer 1of encoder 
-   linear_layer1(matrix) ;// consists of linear and bias layer 
-   relu(matrix) ;
- // end of layer 1
 
-   addition2_block(matrix) ;
-normalize_2enc(matrix) ;
- //encode ends here
+    //attention block end 
+    addition_block(matrix) ;
+    calculate_params(matrix);
+    normalize_matrix(matrix);
+    //linear layer 1of encoder 
+    linear_layer1(matrix) ;// consists of linear and bias layer 
+    relu(matrix) ;
+    // end of layer 1
+
+    addition2_block(matrix) ;
+    normalize_2enc(matrix) ;
+    //encoder ends here
+
+//decoder MHA starts 
+    d_qk_trans(matrix);
+    decoder_softmax(matrix);
+    d_qkv_final(matrix);
+    d_resultant_qkv(matrix);
+ //decoder MHA ends 
+   d_addition_block(matrix) ;
+   d_calculate_params(matrix);
+  d_normalize_matrix(matrix)  ;
+
+
+
+
+
+
+
     //to print all information 
     printMatrix(matrix);
+
+
     return 0;
-   
+
 }
