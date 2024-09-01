@@ -47,11 +47,17 @@ struct Matrix {
     double  d_add_qkv_ [SIZE][SIZE] ;    //addition of masked mha output with qkv mha decoder  6*6
     double  d_msha_norm[SIZE][SIZE] ;   //output of masked mHa block 6*6
     double  d_normalized [SIZE][SIZE];   //output of normalized MHA block in decoder  6*6 
-    // double  [SIZE][SIZE];
-    // double  [SIZE][SIZE];
-    // double  [SIZE][SIZE];
-    // double  [SIZE][SIZE];
-
+     double d_linear1_output  [SIZE][SIZE]; //output of linear layer of decoder 6*6
+     double   d_weights_for_linear_layer1 [SIZE][SIZE];//wEights for linear layer in decoder upper to MHA 6*6
+     double d_bias_layer1 [1][SIZE];   //wEights for linear layer BIAS in decoder upper to MHA 1*6
+    double d_relu1_output [SIZE][SIZE];  //    linear layer OUTPUT after relu in decoder upper to MHA 6*6  
+    double d_add_encoder2 [SIZE][SIZE];   // addition  layer decoder output  for linear layer 6*6
+    double d_normalized_2enc  [SIZE][SIZE];  // normalized layer after addition 6*6
+    double flattened [SIZE*SIZE];         //flatten array at the output of transformer 1-D [36]
+    double linear_logits [23];    // output of linear layer after flattening in output of transformer 1*23
+    double weights_output_final_linear [36][23]; //weights of the final linear layer of tp n*m [[m is the vocab size ]->36*23]
+    double final_logits [23];  //final logits of the transformer 
+        // double  [SIZE][SIZE];
     
 };
 
@@ -182,6 +188,52 @@ void initializeMatrix(Matrix& m) {
         }
     }
 
+double d_msha_norm_initValues[SIZE][SIZE] ={    //have to change this as rn haven't got dis
+    {0.8, 0.34, 0.45, 0.54, 0.07,0.53},
+    {0.85, 0.74, 0.78, 0.5 , 0.75,0.55},
+    {0.53, 0.81, 0.55, 0.59, 0.49,0.14},
+    {0.2, 0.3, 0.10,0.62, 0.69, 0.37} ,
+   { 0.4, 0.2, 0.2,0.52, 0.39, 0.47},
+    {0.5, 0.6, 0.12,0.42, 0.39, 0.77}
+};
+
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            m.d_msha_norm[i][j] = d_msha_norm_initValues[i][j];
+        }
+    }
+
+
+
+      double d_layer1_linearw[SIZE][SIZE] = {      //linear layer weights for decoder module 6*6
+        {0.5, 0.05, 0.97, 0.22, 0.56, 0.02},
+        {0.17, 0.52, 0.63, 0.48, 0.06, 0.6},
+        {0.53, 0.87, 0.47, 0.1, 0.31, 0.79},
+        {0.83, 0.58, 0.38, 0.09, 0.64, 0.25},
+        {0.81, 0.85, 0.74, 0.35, 0.31, 0.53},
+        {0.25, 0.31, 0.22, 0.77, 0.57, 0.85}
+    };
+
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            m.d_weights_for_linear_layer1[i][j] = d_layer1_linearw[i][j];
+        }
+    }
+
+ double d_bias1_linearw[1][SIZE] = {      //bias  layer weights for decoder module 1*6
+    {0.42, 0.18, 0.25, 0.42, 0.35, 0.45}
+    
+};
+
+    for (int i = 0; i < 1; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            m.d_bias_layer1[i][j] = d_bias1_linearw[i][j];
+        }
+    }
+
+      
+
+ 
 
      // Calculate Position Encoding matrix
   for (int i = 0; i < SIZE; i++) {
@@ -394,6 +446,56 @@ std::cout << "\n --------------------------------------------------\n";
         }
         std::cout << "\n";
     }
+
+ std::cout << "\n --------------------------------------------------\n";
+      std::cout << "\n  output  of decoder MHA normalized layer +addition       :\n";
+ for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            std::cout << m.d_normalized[i][j] << "\t";
+        }
+        std::cout << "\n";
+    }
+
+ std::cout << "\n --------------------------------------------------\n";
+      std::cout << "\n  output  of decoder  linear+relu  layer        :\n";
+ for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            std::cout << m.d_relu1_output[i][j] << "\t";
+        }
+        std::cout << "\n";
+    }
+
+ std::cout << "\n --------------------------------------------------\n";
+      std::cout << "\n  output  of decoder  linear+relu + normalization +add layer        :\n";
+ for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            std::cout << m.d_normalized_2enc[i][j] << "\t";
+        }
+        std::cout << "\n";
+    }
+
+  std::cout << "\n --------------------------------------------------\n";
+    std::cout << "Flattened matrix in a single line:" << std::endl;
+    for (int i = 0; i < SIZE * SIZE; ++i) {
+        std::cout << m.flattened[i] << " ";
+    }
+    std::cout << std::endl;  // Ensure there is a newline at the end
+
+
+  std::cout << "\n --------------------------------------------------\n";
+    std::cout << "linear layer  output at the end :" << std::endl;
+    for (int i = 0; i < 23; ++i) {
+        std::cout << m.linear_logits[i] << " ";
+    }
+    std::cout << std::endl;  // Ensure there is a newline at the end
+
+
+  std::cout << "\n --------------------------------------------------\n";
+    std::cout << "probablities after softmax at the end :" << std::endl;
+    for (int i = 0; i < 23; ++i) {
+        std::cout << m.final_logits[i] << " ";
+    }
+    std::cout << std::endl;  // Ensure there is a newline at the end
 
 
 

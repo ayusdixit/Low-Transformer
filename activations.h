@@ -41,6 +41,22 @@
 }
 
 
+ void final_softmax(Matrix& m) {                      //softmax activation funciton 
+    
+        double row_sum = 0.0;
+        
+        // Calculate sum of exp(x) for the denominator
+        for (int j = 0; j < 23; j++) {
+            row_sum += std::exp(m.linear_logits[j]);
+        }
+        
+        // Apply softmax formula to each element in the row
+        for (int j = 0; j < 23; j++) {
+            m.final_logits[j] = std::exp(m.linear_logits[j]) / row_sum;
+        }
+    }
+
+
 
 
 void relu(Matrix& m){
@@ -51,6 +67,14 @@ void relu(Matrix& m){
             }
         }
     }
- 
+
+ void d_relu(Matrix& m){
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+             
+                m.d_relu1_output[i][j] = (m.d_linear1_output[i][j] > 0) ? m.d_linear1_output[i][j] : 0;  
+            }
+        }
+    }
 
 #endif // ACTIVATION_H
