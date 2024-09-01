@@ -15,11 +15,15 @@ using namespace std;
 #include "norm_add_second.h"
 #include "decoder.h"
 #include "decoder_normalize.h"
+#include "decoder_linear.h"
+#include "decoder_norm_add_second.h"
+#include "transformer_output.h"
+#include "init.h"
 
-int main() {
+    int main() {
     //printEncoded();   // For encoding the text 
     Matrix matrix;
-     //encoder module started
+    //encoder module started
     initializeMatrix(matrix);
     addMatrix(matrix) ;
     transpose(matrix) ;
@@ -43,18 +47,27 @@ int main() {
     normalize_2enc(matrix) ;
     //encoder ends here
 
-//decoder MHA starts 
+    //decoder MHA starts 
     d_qk_trans(matrix);
     decoder_softmax(matrix);
     d_qkv_final(matrix);
     d_resultant_qkv(matrix);
- //decoder MHA ends 
-   d_addition_block(matrix) ;
-   d_calculate_params(matrix);
-  d_normalize_matrix(matrix)  ;
+    //decoder MHA ends 
+    d_addition_block(matrix) ;
+    d_calculate_params(matrix);
+    d_normalize_matrix(matrix)  ;   //normalize block ends in decoder 
+    //linear layer 1of decoder 
+    d_linear_layer1(matrix) ;// consists of linear and bias layer 
+    d_relu(matrix) ;
+    // end of layer 1 of decoder 
+    d_addition2_block(matrix) ;
+    d_normalize_2enc(matrix) ;
+    //to the final flatten layer of tranformer 
+        final_weights_word(matrix) ;
 
-
-
+    flattenMatrix(matrix) ;
+    linear_flattenMatrix(matrix) ;
+   final_softmax(matrix) ;
 
 
 
